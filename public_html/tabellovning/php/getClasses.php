@@ -8,7 +8,7 @@ $stmt = $db->query($sql);
 $resultat = $stmt->fetchAll();
 
 $out = new stdClass();
-$out->activities=[];
+$out -> classes=[];
 foreach($resultat as $row) {
     $out->classes[]=['klass'=>$row['klass']];
 }
