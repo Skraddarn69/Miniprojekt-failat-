@@ -78,6 +78,9 @@ if($antaPoster===0) {
     $error -> error = ["Fel vid spara", "Inga poster sparades", $stmt->errorInfo()];
     skickaSvar($error, 400);
 } else {
+    $sql = "INSERT INTO resultat (elev) VALUES (:elev)";
+    $stmt = $db -> prepare($sql);
+    $stmt -> execute(['elev'=>$namn]);
     $svar = new stdClass();
     $svar -> message = ["Spara lyckades"];
     skickaSvar($svar, 200);
