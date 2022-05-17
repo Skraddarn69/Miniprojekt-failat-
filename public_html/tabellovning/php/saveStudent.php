@@ -69,7 +69,8 @@ if($stmt->fetch()) {
     skickaSvar($error, 400);
 }
 
-$sql = "INSERT INTO elever (klass, namn) VALUES (:klass, :namn)";
+$sql = "INSERT INTO elever (klass, namn) VALUES (:klass, :namn);
+INSERT INTO resultat (elev) VALUES (:namn)";
 $stmt = $db -> prepare($sql);
 $stmt -> execute(['klass'=>$klass, 'namn'=>$namn]);
 $antaPoster = $stmt -> rowCount();
@@ -78,9 +79,6 @@ if($antaPoster===0) {
     $error -> error = ["Fel vid spara", "Inga poster sparades", $stmt->errorInfo()];
     skickaSvar($error, 400);
 } else {
-    $sql = "INSERT INTO resultat (elev) VALUES (:elev)";
-    $stmt = $db -> prepare($sql);
-    $stmt -> execute(['elev'=>$namn]);
     $svar = new stdClass();
     $svar -> message = ["Spara lyckades"];
     skickaSvar($svar, 200);
