@@ -20,7 +20,8 @@ $namn = strip_tags($namn);
 
 $db = kopplaDatabas();
 
-$sql = "DELETE FROM elever WHERE namn=:namn";
+$sql = "DELETE FROM resultat WHERE elev=:namn;
+DELETE FROM elever WHERE namn=:namn";
 $stmt = $db -> prepare($sql);
 $stmt -> execute(['namn'=>$namn]);
 $antaPoster = $stmt -> rowCount();
