@@ -9,24 +9,31 @@ if($_SERVER['REQUEST_METHOD']!=="POST") {
     skickaSvar($error, 405);
 }
 
-if(!isset($_POST['klass'])) {
+if(!isset($_POST['klassID'])) {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'klass' saknas"];
+    $error -> error = ["Felaktig indata", "'klassID' saknas"];
     skickaSvar($error, 400);
 }
 
-$klass = filter_input(INPUT_POST, 'klass', FILTER_UNSAFE_RAW);
-$klass = strip_tags($klass);
+$klassID = filter_input(INPUT_POST, 'klassID', FILTER_SANITIZE_NUMBER_INT);
+$unwanted = "+\-";
+$klassID = trim($klassID, $unwanted);
 
-$sql="SELECT namn FROM elever WHERE klass=:klass";
+if($klassID==="") {
+    $error = new stdClass();
+    $error -> error = ["Felaktig indata", "'klassID' får endast bestå av ett heltal och inte vara tom"];
+    skickaSvar($error, 400);
+}
+
+$sql="SELECT ID, namn FROM elever WHERE klassID=:klassID";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['klass'=>$klass]);
+$stmt -> execute(['klassID'=>$klassID]);
 $resultat = $stmt -> fetchAll();
 
 $out = new stdClass();
 $out -> students=[];
 foreach($resultat as $row) {
-    $out->students[]=['namn'=>$row['namn']];
+    $out->students[]=['ID'=>$row['ID'], 'namn'=>$row['namn']];
 }
 
 skickaSvar($out, 200);
