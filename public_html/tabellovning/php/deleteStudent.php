@@ -9,21 +9,28 @@ if($_SERVER['REQUEST_METHOD']!=="POST") {
     skickaSvar($error, 405);
 }
 
-if(!isset($_POST['namn'])) {
+if(!isset($_POST['ID'])) {
     $error = new stdClass();
-    $error -> error = ["Felaktigt anrop", "'namn' saknas"];
+    $error -> error = ["Felaktig indata", "'ID' saknas"];
     skickaSvar($error, 400);
 }
 
-$namn = filter_input(INPUT_POST, 'namn', FILTER_UNSAFE_RAW);
-$namn = strip_tags($namn);
+$ID = filter_input(INPUT_POST, 'ID', FILTER_SANITIZE_NUMBER_INT);
+$unwanted = "+\-";
+$ID = trim($ID, $unwanted);
+
+if($ID==="") {
+    $error = new stdClass();
+    $error -> error = ["Felaktig indata", "'ID' får endast bestå av ett heltal och inte vara tomt"];
+    skickaSvar($error, 400);
+}
 
 $db = kopplaDatabas();
 
-$sql = "DELETE FROM resultat WHERE elev=:namn;
-DELETE FROM elever WHERE namn=:namn";
+$sql = "DELETE FROM resultat WHERE elevID=:ID;
+DELETE FROM elever WHERE ID=:ID";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['namn'=>$namn]);
+$stmt -> execute(['ID'=>$ID]);
 $antaPoster = $stmt -> rowCount();
 if($antaPoster===0) {
     $svar = new stdClass();
