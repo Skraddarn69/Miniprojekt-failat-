@@ -9,9 +9,9 @@ if($_SERVER['REQUEST_METHOD']!=="POST") {
     skickaSvar($error, 405);
 }
 
-if(!isset($_POST['elev'])) {
+if(!isset($_POST['elevID'])) {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "Parametern 'elev' saknas"];
+    $error -> error = ["Felaktig indata", "Parametern 'elevID' saknas"];
     skickaSvar($error, 400);
 }
 
@@ -27,39 +27,45 @@ if(!isset($_POST['poang'])) {
     skickaSvar($error, 400);
 }
 
-$elev = filter_input(INPUT_POST , 'elev' ,FILTER_UNSAFE_RAW);
-$elev = strip_tags($elev);
+$unwanted = "+\-";
+
+$elevID = filter_input(INPUT_POST , 'elevID' ,FILTER_SANITIZE_NUMBER_INT);
+$elevID = trim($elevID, $unwanted);
 
 $tabell = filter_input(INPUT_POST , 'tabell' ,FILTER_SANITIZE_NUMBER_INT);
+$tabell = trim($tabell, $unwanted);
 
 $poang = filter_input(INPUT_POST , 'poang' ,FILTER_SANITIZE_NUMBER_INT);
+$poang = trim($poang, $unwanted);
 
-if($elev==="") {
+if($elevID==="") {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'elev' får inte vara tom"];
+    $error -> error = ["Felaktig indata", "'elevID' får endast bestå av siffror och inte vara tom"];
     skickaSvar($error, 400);
 }
 
 if($tabell==="") {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'tabell' får inte vara tom"];
+    $error -> error = ["Felaktig indata", "'tabell' får endast bestå av ett heltal från 1-13 och inte vara tom"];
     skickaSvar($error, 400);
 }
 
 if($poang==="") {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'poang' får inte vara tom"];
+    $error -> error = ["Felaktig indata", "'poang' får endast bestå av siffror och inte vara tom"];
     skickaSvar($error, 400);
 }
 
-if(($tabell<1|$tabell>12)&$tabell!=="blandat") {
+if(($tabell<1|$tabell>13)) {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'tabell' måste vara ett heltal från 1 till 12 eller 'blandat'"];
+    $error -> error = ["Felaktig indata", "'tabell' måste vara ett heltal från 1 till 13 eller 'blandat'"];
     skickaSvar($error, 400);
 }
 
-if($tabell!=="blandat") {
-    $tabell = $tabell . "ansTabell";
+if($tabell==13) {
+    $tabell = "blandade";
+} else {
+    $tabell = $tabell . "x";
 }
 
 if($poang<0|$poang>10) {
@@ -72,9 +78,9 @@ $db = kopplaDatabas();
 
 $sql = "UPDATE resultat 
         SET $tabell=:poang 
-        WHERE elev=:elev";
+        WHERE elevID=:elevID";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['elev'=>$elev, 'poang'=>$poang]);
+$stmt -> execute(['elevID'=>$elevID, 'poang'=>$poang]);
 $antaPoster = $stmt -> rowCount();
 if($antaPoster===0) {
     $error = new stdClass();
