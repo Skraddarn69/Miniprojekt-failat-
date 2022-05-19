@@ -9,41 +9,36 @@ if($_SERVER['REQUEST_METHOD']!=="POST") {
     skickaSvar($error, 405);
 }
 
-if(!isset($_POST['klass'])) {
+if(!isset($_POST['ID'])) {
     $error = new stdClass();
-    $error -> error = ["Felaktigt anrop", "'klass' saknas"];
+    $error -> error = ["Felaktigt anrop", "'ID' saknas"];
     skickaSvar($error, 400);
 }
 
-$klass = filter_input(INPUT_POST, 'klass', FILTER_UNSAFE_RAW);
-$klass = strip_tags($klass);
-if($klass==="") {
-    $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'klass' får inte vara tom"];
-    skickaSvar($error, 400);
-}
+$ID = filter_input(INPUT_POST, 'ID', FILTER_SANITIZE_NUMBER_INT);
+$unwanted = "+\-";
+$ID = trim($ID, $unwanted);
 
-$klassFormat = "/[1-9][A-Ö]/";
-if(!preg_match($klassFormat, $klass)) {
+if($ID==="") {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'klass' får endast bestå av en siffra följd av en stor bokstav, ex:1B"];
+    $error -> error = ["Felaktig indata", "'ID' får endast bestå av ett heltal och inte vara tom"];
     skickaSvar($error, 400);
 }
 
 $db = kopplaDatabas();
 
-$sql = "SELECT * FROM elever WHERE klass=:klass";
+$sql = "SELECT * FROM elever WHERE klassID=:klassID";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['klass'=>$klass]);
+$stmt -> execute(['klassID'=>$ID]);
 if($stmt->fetch()) {
     $error = new stdClass();
-    $error -> error = ["Fel vid radering", "Angiven klass ($klass) innehåller elever"];
+    $error -> error = ["Fel vid radering", "Klassen innehåller elever"];
     skickaSvar($error, 400);
 }
 
-$sql = "DELETE FROM klasser WHERE klass=:klass";
+$sql = "DELETE FROM klasser WHERE ID=:ID";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['klass'=>$klass]);
+$stmt -> execute(['ID'=>$ID]);
 $antaPoster = $stmt -> rowCount();
 if($antaPoster===0) {
     $svar = new stdClass();
@@ -56,4 +51,3 @@ if($antaPoster===0) {
     $svar -> message = ["Radera lyckades", "$antaPoster poster raderades"];
     skickaSvar($svar, 200);
 }
-
