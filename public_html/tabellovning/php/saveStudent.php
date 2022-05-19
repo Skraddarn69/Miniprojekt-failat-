@@ -11,29 +11,32 @@ if($_SERVER['REQUEST_METHOD']!=="POST") {
 }
 
 // här börjar spara klass
-if(!isset($_POST['klass'])&!isset($_POST['namn'])) {
+if(!isset($_POST['klassID'])) {
     $error = new stdClass();
-    $error -> error = ["Felaktigt anrop", "Parametrarna 'klass' och 'namn' saknas"];
-    skickaSvar($error, 400);
-}
-
-if(!isset($_POST['klass'])) {
-    $error = new stdClass();
-    $error -> error = ["Felaktigt anrop", "Parametern 'klass' saknas"];
+    $error -> error = ["Felaktig indata", "Parametern 'klassID' saknas"];
     skickaSvar($error, 400);
 }
 
 if(!isset($_POST['namn'])) {
     $error = new stdClass();
-    $error -> error = ["Felaktigt anrop", "Parametern 'namn' saknas"];
+    $error -> error = ["Felaktig indata", "Parametern 'namn' saknas"];
+    skickaSvar($error, 400);
+}
+
+if(!isset($_POST['losenord'])) {
+    $error = new stdClass();
+    $error -> error = ["Felaktig indata", "Parametern 'losenord' saknas"];
     skickaSvar($error, 400);
 }
 
 $namn = filter_input(INPUT_POST , 'namn' ,FILTER_UNSAFE_RAW);
 $namn = strip_tags($namn);
 
-$klass = filter_input(INPUT_POST, 'klass', FILTER_UNSAFE_RAW);
-$klass = strip_tags($klass);
+$klassID = filter_input(INPUT_POST, 'klassID', FILTER_UNSAFE_RAW);
+$klassID = strip_tags($klassID);
+
+$losenord = filter_input(INPUT_POST, 'losenord', FILTER_UNSAFE_RAW);
+$losenord = strip_tags($losenord);
 
 if($namn==="") {
     $error = new stdClass();
@@ -41,16 +44,9 @@ if($namn==="") {
     skickaSvar($error, 400);
 }
 
-if($klass==="") {
+if($klassID==="") {
     $error = new stdClass();
-    $error -> error = ["Felaktigt anrop", "'klass' får inte vara tomt"];
-    skickaSvar($error, 400);
-}
-
-$klassFormat = "/[1-9][A-Ö]/";
-if(!preg_match($klassFormat, $klass)) {
-    $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'klass' får endast bestå av en siffra följd av en stor bokstav, ex:1B"];
+    $error -> error = ["Felaktigt anrop", "'klassID' får inte vara tomt"];
     skickaSvar($error, 400);
 }
 
@@ -69,10 +65,20 @@ if($stmt->fetch()) {
     skickaSvar($error, 400);
 }
 
-$sql = "INSERT INTO elever (klass, namn) VALUES (:klass, :namn);
-INSERT INTO resultat (elev) VALUES (:namn)";
+$sql = "INSERT INTO elever (klassID, namn, losenord) VALUES (:klassID, :namn, :losenord)";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['klass'=>$klass, 'namn'=>$namn]);
+$stmt -> execute(['klassID'=>$klassID, 'namn'=>$namn, 'losenord'=>$losenord]);
+
+$sql = "SELECT ID FROM elever WHERE namn=:namn";
+$stmt = $db -> prepare($sql);
+$stmt -> execute(['namn'=>$namn]);
+$resultat = $stmt -> fetchObject();;
+$elevID = $resultat -> ID;
+
+$sql = "INSERT INTO resultat (elevID) VALUES (:elevID)";
+$stmt = $db -> prepare($sql);
+$stmt -> execute(['elevID'=>$elevID]);
+
 $antaPoster = $stmt -> rowCount();
 if($antaPoster===0) {
     $error = new stdClass();
