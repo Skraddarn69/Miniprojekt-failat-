@@ -27,26 +27,19 @@ if($elevID==="") {
 
 $db = kopplaDatabas();
 
-$sql="SELECT * FROM resultat 
+$sql="SELECT ID, tabell, poang, datum FROM resultat 
 WHERE elevID=:elevID";
 $stmt = $db -> prepare($sql);
 $stmt -> execute(['elevID'=>$elevID]);
-$resultat = $stmt -> fetchObject();
+$resultat = $stmt -> fetchAll();
 
 $out = new stdClass();
 $out -> rekord=[];
-$i = 0;
 foreach($resultat as $row) {
-    if($i==0) {
-        $out->rekord[]=['elevID'=>$row];
-        $i += 1;
-    } elseif($i==13) {
-        $out->rekord[]=['blandade'=>$row];
-        $i += 1;
-    } else {
-        $out->rekord[]=[$i . 'x'=>$row];
-        $i += 1;
-    }
+        $out->rekord[]=['ID'=>$row['ID']];
+        $out->rekord[]=['tabell'=>$row['tabell']];
+        $out->rekord[]=['poang'=>$row['poang']];
+        $out->rekord[]=['datum'=>$row['datum']];
 }
 
 skickaSvar($out, 200);
