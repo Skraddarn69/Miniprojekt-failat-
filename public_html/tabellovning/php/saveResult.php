@@ -63,9 +63,9 @@ if(($tabell<1|$tabell>13)) {
 }
 
 if($tabell==13) {
-    $tabell = "blandade";
+    $tabell = "blandade tabeller";
 } else {
-    $tabell = $tabell . "x";
+    $tabell = $tabell . ":ans tabell";
 }
 
 if($poang<0|$poang>10) {
@@ -76,11 +76,9 @@ if($poang<0|$poang>10) {
 
 $db = kopplaDatabas();
 
-$sql = "UPDATE resultat 
-        SET $tabell=:poang 
-        WHERE elevID=:elevID";
+$sql = "INSERT INTO resultat (elevID, tabell, poang, datum) VALUES (:elevID, :tabell, :poang, cast(:datum AS datetime))";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['elevID'=>$elevID, 'poang'=>$poang]);
+$stmt -> execute(['elevID'=>$elevID, 'tabell'=>$tabell, 'poang'=>$poang, 'datum'=>date("Y-m-d")]);
 $antaPoster = $stmt -> rowCount();
 if($antaPoster===0) {
     $error = new stdClass();
