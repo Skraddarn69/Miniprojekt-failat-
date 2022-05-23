@@ -58,7 +58,7 @@ if($poang==="") {
 
 if(($tabell<1|$tabell>13)) {
     $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'tabell' måste vara ett heltal från 1 till 13 eller 'blandat'"];
+    $error -> error = ["Felaktig indata", "'tabell' måste vara ett heltal från 1 till 13"];
     skickaSvar($error, 400);
 }
 
