@@ -9,10 +9,26 @@ if($_SERVER['REQUEST_METHOD']!=="POST") {
     skickaSvar($error, 405);
 }
 
+if(!isset($_POST['lararID'])) {
+    $error = new stdClass();
+    $error -> error = ["Felaktigt anrop", "Parametern 'lararID' saknas"];
+    skickaSvar($error, 400);
+}
+
+$lararID = filter_input(INPUT_POST, 'lararID', FILTER_SANITIZE_NUMBER_INT);
+$unwanted = "+\-";
+$lararID = trim($lararID, $unwanted);
+if($lararID==="") {
+    $error = new stdClass();
+    $error -> error = ["Felaktigt anrop", "'lararID' får inte vara tom"];
+    skickaSvar($error, 400);
+}
+
 $db = kopplaDatabas();
 
-$sql="SELECT ID, klass FROM klasser";
-$stmt = $db->query($sql);
+$sql="SELECT ID, klass FROM klasser WHERE lararID=:lararID";
+$stmt = $db -> prepare($sql);
+$stmt -> execute(['lararID'=>$lararID]);
 $resultat = $stmt->fetchAll();
 
 $out = new stdClass();
