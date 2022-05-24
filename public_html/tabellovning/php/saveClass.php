@@ -17,11 +17,26 @@ if(!isset($_POST['klass'])) {
     skickaSvar($error, 400);
 }
 
-$klass = filter_input(INPUT_POST , 'klass' ,FILTER_UNSAFE_RAW);
+if(!isset($_POST['lararID'])) {
+    $error = new stdClass();
+    $error -> error = ["Felaktigt anrop", "Parametern 'lararID' saknas"];
+    skickaSvar($error, 400);
+}
+
+$klass = filter_input(INPUT_POST, 'klass' ,FILTER_UNSAFE_RAW);
 $klass = strip_tags($klass);
 if($klass==="") {
     $error = new stdClass();
     $error -> error = ["Felaktigt anrop", "'klass' får inte vara tom"];
+    skickaSvar($error, 400);
+}
+
+$lararID = filter_input(INPUT_POST, 'lararID', FILTER_SANITIZE_NUMBER_INT);
+$unwanted = "+\-";
+$lararID = trim($lararID, $unwanted);
+if($lararID==="") {
+    $error = new stdClass();
+    $error -> error = ["Felaktigt anrop", "'lararID' får inte vara tom"];
     skickaSvar($error, 400);
 }
 
@@ -41,9 +56,9 @@ if($stmt->fetch()) {
     skickaSvar($error, 400);
 }
 
-$sql = "INSERT INTO klasser (klass) VALUES (:klass)";
+$sql = "INSERT INTO klasser (klass, lararID) VALUES (:klass, :lararID)";
 $stmt = $db -> prepare($sql);
-$stmt -> execute(['klass'=>$klass]);
+$stmt -> execute(['klass'=>$klass, 'lararID'=>$lararID]);
 $antaPoster = $stmt -> rowCount();
 if($antaPoster===0) {
     $error = new stdClass();
