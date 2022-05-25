@@ -68,6 +68,6 @@ if($antaPoster===0) {
     skickaSvar($svar, 200);
 } else {
     $out = new stdClass();
-    $out -> losenord = $resultat['losenord'];
+    $out -> losenord = $resultat -> losenord;
     skickaSvar($out, 200);
 }
