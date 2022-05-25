@@ -25,19 +25,7 @@ if($anvandarTyp==="") {
     skickaSvar($error, 400);
 }
 
-if($anvandarTyp==1) {
-    $tabell = "larare";
-} elseif($anvandarTyp===2) {
-    $tabell = "elev";
-} elseif($anvandarTyp===3) {
-    $tabell = "admin";
-} else {
-    $error = new stdClass();
-    $error -> error = ["Felaktig indata", "'anvandarTyp' får endast vara 1, 2 eller 3"];
-    skickaSvar($error, 400);
-}
-
-if($tabell !== "admin") {
+if($anvandarTyp==1 || $anvandarTyp==2) {
     if(!isset($_POST['ID'])) {
         $error = new stdClass();
         $error -> error = ["Felaktig indata", "'ID' saknas"];
@@ -52,22 +40,34 @@ if($tabell !== "admin") {
         $error -> error = ["Felaktig indata", "'ID' får endast bestå av ett heltal och inte vara tom"];
         skickaSvar($error, 400);
     }
-
-    $sql="SELECT losenord FROM :tabell WHERE ID=:ID";
+}
+    
+if($anvandarTyp==1) {
+    $sql="SELECT losenord FROM larare WHERE ID=:ID";
     $stmt = $db -> prepare($sql);
-    $stmt -> execute(['tabell'=>$tabell, 'ID'=>$ID]);
-    $resultat = $stmt -> fetchObject();
-    $out = new stdClass();
-    $out -> losenord = $resultat['losenord'];
-
-    skickaSvar($out, 200);
+    $stmt -> execute(['ID'=>$ID]);
+} elseif($anvandarTyp==2) {
+    $sql="SELECT losenord FROM elev WHERE ID=:ID";
+    $stmt = $db -> prepare($sql);
+    $stmt -> execute(['ID'=>$ID]);
+} elseif($anvandarTyp==3) {
+    $sql="SELECT losenord FROM admin";
+    $stmt = $db -> query($sql);
 } else {
-    $sql="SELECT losenord FROM :tabell";
-    $stmt = $db -> prepare($sql);
-    $stmt -> execute(['tabell'=>$tabell]);
-    $resultat = $stmt -> fetchObject();
+    $error = new stdClass();
+    $error -> error = ["Felaktig indata", "'anvandarTyp' måste vara 1, 2 eller 3"];
+    skickaSvar($error, 400);
+}
+
+$resultat = $stmt -> fetchObject();
+$antaPoster = $stmt -> rowCount();
+if($antaPoster===0) {
+    $svar = new stdClass();
+    $svar -> result = false;
+    $svar -> message = ["Inget lösenord returnerades"];
+    skickaSvar($svar, 200);
+} else {
     $out = new stdClass();
     $out -> losenord = $resultat['losenord'];
-
     skickaSvar($out, 200);
 }
