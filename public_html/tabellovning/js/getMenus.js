@@ -1,6 +1,6 @@
 function getClasses(userType, teacherID) {
     if(userType===1) {
-        fetch('../php/getClasses.php?anvandarTyp=' + userType)
+        fetch('../php/getClasses.php?anvandarTyp=' + userType + '&lararID=' + teacherID)
         .then(function(response) {
             if(response.status == 200) {
                 return response.json();
@@ -10,7 +10,7 @@ function getClasses(userType, teacherID) {
             appendClasses(data);
         })
     } else {
-        fetch('../php/getClasses.php?anvandarTyp=' + userType + '&lararID=' + teacherID)
+        fetch('../php/getClasses.php?anvandarTyp=' + userType)
         .then(function(response) {
             if(response.status == 200) {
                 return response.json();
