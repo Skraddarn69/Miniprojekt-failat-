@@ -23,9 +23,10 @@ function getClasses(userType, teacherID) {
 }
 
 function appendClasses(data) {
-    for(let i=0;i<data.classes.length;i++) {
-        let cells = document.getElementsByTagName("td");
-        cells.item(i).id = data.classes(i).ID;
-        cells.item(i).innerHTML = data.classes(i).klass;
+    let table = document.getElementById("menu");
+    let cells = table.getElementsByTagName("td");
+    for(let i=0;i<cells.length;i++) {
+        cells[i].id = data.classes[i].ID;
+        cells[i].innerHTML = data.classes[i].klass;
     }
 }
