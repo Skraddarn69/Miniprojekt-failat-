@@ -1,6 +1,6 @@
 function getClasses(userType, teacherID) {
     if(userType===1) {
-        fetch('../php/getClasses.php?anvandarTyp=' + userType)
+        fetch('../php/getClasses.php?anvandarTyp=' + userType + '&lararID=' + teacherID)
         .then(function(response) {
             if(response.status == 200) {
                 return response.json();
@@ -10,7 +10,7 @@ function getClasses(userType, teacherID) {
             appendClasses(data);
         })
     } else {
-        fetch('../php/getClasses.php?anvandarTyp=' + userType + '&lararID=' + teacherID)
+        fetch('../php/getClasses.php?anvandarTyp=' + userType)
         .then(function(response) {
             if(response.status == 200) {
                 return response.json();
@@ -23,9 +23,10 @@ function getClasses(userType, teacherID) {
 }
 
 function appendClasses(data) {
-    for(let i=0;i<data.classes.length;i++) {
-        let cells = document.getElementsByTagName("td");
-        cells.item(i).id = data.classes(i).ID;
-        cells.item(i).innerHTML = data.classes(i).klass;
+    let table = document.getElementById("menu");
+    let cells = table.getElementsByTagName("td");
+    for(let i=0;i<cells.length;i++) {
+        cells[i].id = data.classes[i].ID;
+        cells[i].innerHTML = data.classes[i].klass;
     }
 }
