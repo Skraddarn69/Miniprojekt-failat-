@@ -9,7 +9,7 @@ function getClasses(page, teacherID) {
             }
         })
         .then(function(data) {
-            appendClasses(data);
+            appendClasses(data, page);
         })
     } else {
         fetch('http://localhost/Miniprojekt/public_html/tabellovning/php/getClasses.php?page=' +page)
@@ -25,8 +25,20 @@ function getClasses(page, teacherID) {
 }
 
 // Fyller tabell med klasser
-function appendClasses(data, page = 0) {
+function appendClasses(data, page) {
+    let classes = data.classes;
+    let pages;
+    let table = document.getElementById("menu");
+    let cells = table.getElementsByTagName("td");
     
+    if (pages > 1) {
+        pages = data.pages; 
+        appendNav(page, pages);
+    }
+
+    for(let i=0;i<cells.length;i++) {
+        cells.item(i).innerHTML = classes[i].klass;
+    }
 }
 
 function appendNav(page, pages) {
