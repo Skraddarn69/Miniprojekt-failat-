@@ -1,5 +1,5 @@
+// Starta js-funktioner när sidan har laddats in
 window.onload = function() {
-    let userType = 2;
 
-    getClasses(userType, 0);
+    getClasses(1);
 }

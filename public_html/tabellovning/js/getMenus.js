@@ -1,6 +1,8 @@
-function getClasses(userType, teacherID) {
-    if(userType===1) {
-        fetch('../php/getClasses.php?anvandarTyp=' + userType + '&lararID=' + teacherID)
+// Hämtar klasser
+function getClasses(page, teacherID) {
+    
+    if((teacherID===null)) {
+        fetch('http://localhost/Miniprojekt/public_html/tabellovning/php/getClasses.php?teacherID=' +teacherID +'page=' +page)
         .then(function(response) {
             if(response.status == 200) {
                 return response.json();
@@ -10,23 +12,23 @@ function getClasses(userType, teacherID) {
             appendClasses(data);
         })
     } else {
-        fetch('../php/getClasses.php?anvandarTyp=' + userType)
+        fetch('http://localhost/Miniprojekt/public_html/tabellovning/php/getClasses.php?page=' +page)
         .then(function(response) {
             if(response.status == 200) {
                 return response.json();
             }
         })
         .then(function(data) {
-            appendClasses(data);
+            appendClasses(data, page);
         })
     }
 }
 
-function appendClasses(data) {
-    let table = document.getElementById("menu");
-    let cells = table.getElementsByTagName("td");
-    for(let i=0;i<cells.length;i++) {
-        cells[i].id = data.classes[i].ID;
-        cells[i].innerHTML = data.classes[i].klass;
-    }
+// Fyller tabell med klasser
+function appendClasses(data, page = 0) {
+    
+}
+
+function appendNav(page, pages) {
+    
 }
