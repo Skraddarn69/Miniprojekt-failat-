@@ -58,8 +58,10 @@ if(isset($_GET['teacherID'])) {
 } else {
     $db = kopplaDatabas();
 
-    $sql="SELECT ID, klass FROM klasser"
-        . " ORDER BY klass"
+    $sql="SELECT k.ID, k.klass, COUNT(e.ID) AS studCount"
+        . " FROM klasser AS k LEFT JOIN elever AS e ON e.klassID = k.ID"
+        . " GROUP BY k.klass"
+        . " ORDER BY k.klass"
         . " LIMIT $firstRecord, $records";
     $stmt = $db -> prepare($sql);
     if(!$stmt -> execute()) {
