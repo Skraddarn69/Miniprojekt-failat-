@@ -79,11 +79,11 @@ function getStudents(page, classID) {
             }
         })
         .then(function(data) {
-            appendStudents(data, page);
+            appendStudents(data, page, classID);
         })
 }
 
-function appendStudents(data, page) {
+function appendStudents(data, page, classID) {
     let table = document.getElementById("menu");
     let cells = table.getElementsByTagName("td");
     let back = document.getElementById("back");
@@ -98,11 +98,13 @@ function appendStudents(data, page) {
         cells[i].innerHTML = "";
     }
 
-    appendNavStudents(page, pages);
+    appendNavStudents(page, pages, classID);
     
     for(let i=0;i<studentCount;i++) {
         cells.item(i).innerHTML = students[i].namn;
-        cells.item(i).onclick = function() {console.log(cells.item(i).innerHTML)};
+        cells.item(i).onclick = function() {
+            window.location.href = "passwordCheck.html?ID=" +students[i].ID +"&userType=0";
+        }
     }
 }
 
@@ -112,7 +114,7 @@ function appendNavStudents(page, pages) {
     
     if(page!=1) {
         prev.style.color = "initial";
-        prev.onclick = function() {getStudents(page-1)};
+        prev.onclick = function() {getStudents(page-1, classID)};
     } else {
         prev.style.color = "grey";
         prev.onclick = "";
@@ -120,7 +122,7 @@ function appendNavStudents(page, pages) {
 
     if(page!=pages) {
         next.style.color = "initial";
-        next.onclick = function() {getStudents(page+1)};
+        next.onclick = function() {getStudents(page+1, classID)};
     } else {
         next.style.color = "grey"
         next.onclick = "";

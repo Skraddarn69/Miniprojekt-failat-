@@ -2,8 +2,6 @@
 declare (strict_types=1);
 require_once "funktioner.php";
 
-$db = kopplaDatabas();
-
 if(!isset($_GET['classID'])) {
     $error = new stdClass();
     $error -> error = ["Felaktig indata", "'classID' saknas"];
