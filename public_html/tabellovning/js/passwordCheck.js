@@ -39,6 +39,6 @@ function checkPassword(data, ID, userType) {
             console.log('Nej!');
         }
     } else {
-        alert("Felaktigt lösenord har angivits");
+        alert("Felaktigt lösenord har angivits!");
     }
 }
