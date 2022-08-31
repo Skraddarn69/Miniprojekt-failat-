@@ -10,9 +10,10 @@ window.onload = function() {
         window.location.href = "studMenu.html";
     }
 
-    let next = document.getElementById("next1");
-    next.onclick = function() {
+    let form = document.getElementById("passwordForm");
+    form.onsubmit = function() {
         getPassword(ID, userType);
+        return false;
     }
 }
 

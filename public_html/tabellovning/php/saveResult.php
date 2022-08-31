@@ -1,42 +1,30 @@
 <?php
 declare (strict_types=1);
-
 require_once 'funktioner.php';
 
-if($_SERVER['REQUEST_METHOD']!=="POST") {
-    $error = new stdClass();
-    $error -> error = ["Felaktigt anrop", "Sidan ska anropas med POST"];
-    skickaSvar($error, 405);
-}
-
-if(!isset($_POST['elevID'])) {
+if(!isset($_GET['elevID'])) {
     $error = new stdClass();
     $error -> error = ["Felaktig indata", "Parametern 'elevID' saknas"];
     skickaSvar($error, 400);
 }
 
-if(!isset($_POST['tabell'])) {
+if(!isset($_GET['tabell'])) {
     $error = new stdClass();
     $error -> error = ["Felaktig indata", "Parametern 'tabell' saknas"];
     skickaSvar($error, 400);
 }
 
-if(!isset($_POST['poang'])) {
+if(!isset($_GET['poang'])) {
     $error = new stdClass();
     $error -> error = ["Felaktig indata", "Parametern 'poang' saknas"];
     skickaSvar($error, 400);
 }
 
-$unwanted = "+\-";
+$elevID = filter_input(INPUT_GET , 'elevID' ,FILTER_SANITIZE_NUMBER_INT);
 
-$elevID = filter_input(INPUT_POST , 'elevID' ,FILTER_SANITIZE_NUMBER_INT);
-$elevID = trim($elevID, $unwanted);
+$tabell = filter_input(INPUT_GET , 'tabell' ,FILTER_SANITIZE_NUMBER_INT);
 
-$tabell = filter_input(INPUT_POST , 'tabell' ,FILTER_SANITIZE_NUMBER_INT);
-$tabell = trim($tabell, $unwanted);
-
-$poang = filter_input(INPUT_POST , 'poang' ,FILTER_SANITIZE_NUMBER_INT);
-$poang = trim($poang, $unwanted);
+$poang = filter_input(INPUT_GET , 'poang' ,FILTER_SANITIZE_NUMBER_INT);
 
 if($elevID==="") {
     $error = new stdClass();
@@ -63,9 +51,7 @@ if(($tabell<1|$tabell>13)) {
 }
 
 if($tabell==13) {
-    $tabell = "blandade tabeller";
-} else {
-    $tabell = $tabell . ":ans tabell";
+    $tabell = "blandade";
 }
 
 if($poang<0|$poang>10) {

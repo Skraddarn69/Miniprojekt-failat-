@@ -44,8 +44,10 @@ function appendClasses(data, page) {
         cells.item(i).innerHTML = classes[i].klass;
         if(classes[i].studCount>0) {
             cells.item(i).onclick = function() {getStudents(1, classes[i].ID)};
+            cells.item(i).style.color = "initial";
         } else {
             cells.item(i).onclick = "";
+            cells.item(i).style.color = "grey";
         }
     }
 }
@@ -102,6 +104,7 @@ function appendStudents(data, page, classID) {
     
     for(let i=0;i<studentCount;i++) {
         cells.item(i).innerHTML = students[i].namn;
+        cells.item(i).style.color = "initial";
         cells.item(i).onclick = function() {
             window.location.href = "passwordCheck.html?ID=" +students[i].ID +"&userType=0";
         }
